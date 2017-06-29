@@ -21,7 +21,7 @@ service 'apache2' do
   action :stop
 end
 
-include_recipe 'nginx::default'
+include_recipe 'chef_nginx::default'
 
 %w(default 000-default).each do |disable_site|
   nginx_site disable_site do
