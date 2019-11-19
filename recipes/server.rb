@@ -64,7 +64,7 @@ else
   if node['munin']['multi_environment_monitoring']
     if node['munin']['multi_environment_monitoring'].kind_of?(Array)
       node['munin']['multi_environment_monitoring'].each do |searchenv|
-        search(:node, "munin:[* TO *] AND chef_environment:#{searchenv}").each do |n|
+        search(:node, "munin:[* TO *] AND chef_environment:#{searchenv} AND (platform_version:6* OR platform_version:7*)").each do |n|
           munin_servers << n
         end
       end
