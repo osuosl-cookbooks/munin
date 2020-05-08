@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: munin
+# Cookbook:: munin
 # Recipe:: server
 #
-# Copyright 2010-2013, Opscode, Inc.
+# Copyright:: 2010-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,17 +23,17 @@ unless node['munin']['public_domain']
     when 'production'
       public_domain = node['public_domain']
     else
-      if node['munin']['multi_environment_monitoring']
+      if node['munin']['multi_environment_monitoring'] # rubocop:disable Metrics/BlockNesting
         public_domain = node['public_domain']
       else
-        env = node.chef_environment =~ /_default/ ? 'default' : node.chef_environment
+        env = node.chef_environment =~ /_default/ ? 'default' : node.chef_environment # rubocop:disable Metrics/BlockNesting
         public_domain = "#{env}.#{node['public_domain']}"
       end
     end
   else
     public_domain = node['domain']
   end
-  node.set['munin']['public_domain'] = "munin.#{public_domain}"
+  node.default['munin']['public_domain'] = "munin.#{public_domain}"
 end
 
 web_srv = node['munin']['web_server'].to_sym
@@ -45,24 +45,24 @@ when :nginx
   include_recipe 'munin::server_nginx'
   web_group = node['nginx']['group']
 else
-  fail 'Unsupported web server type provided for munin. Supported: apache or nginx'
+  raise 'Unsupported web server type provided for munin. Supported: apache or nginx'
 end
 
 include_recipe 'munin::client'
 
 sysadmins = []
-if Chef::Config[:solo]
-  sysadmins = data_bag('users').map { |user| data_bag_item('users', user) }
-else
-  sysadmins = search(:users, 'groups:sysadmin')
-end
+sysadmins = if Chef::Config[:solo]
+              data_bag('users').map { |user| data_bag_item('users', user) }
+            else
+              search(:users, 'groups:sysadmin')
+            end
 
 if Chef::Config[:solo]
   munin_servers = [node]
 else
   munin_servers = []
   if node['munin']['multi_environment_monitoring']
-    if node['munin']['multi_environment_monitoring'].kind_of?(Array)
+    if node['munin']['multi_environment_monitoring'].is_a?(Array)
       node['munin']['multi_environment_monitoring'].each do |searchenv|
         search(:node, "munin:[* TO *] AND chef_environment:#{searchenv} AND (platform_version:6* OR platform_version:7*)").each do |n|
           munin_servers << n
@@ -83,8 +83,7 @@ end
 
 munin_servers.sort! { |a, b| a['fqdn'] <=> b['fqdn'] }
 
-case node['platform']
-when 'freebsd'
+if platform?('freebsd')
   package 'munin-master'
 else
   package 'munin'
@@ -118,7 +117,7 @@ template "#{node['munin']['basedir']}/munin.conf" do
   source 'munin.conf.erb'
   mode   '0644'
   variables(
-    :munin_nodes => munin_servers
+    munin_nodes: munin_servers
   )
 end
 
@@ -131,7 +130,7 @@ when 'openid'
   if web_srv == :apache
     include_recipe 'apache2::mod_auth_openid'
   else
-    fail 'OpenID is unsupported on non-apache installs'
+    raise 'OpenID is unsupported on non-apache installs'
   end
 else
   template "#{node['munin']['basedir']}/htpasswd.users" do
@@ -140,7 +139,7 @@ else
     group  web_group
     mode   '0644'
     variables(
-      :sysadmins => sysadmins
+      sysadmins: sysadmins
     )
   end
 end
