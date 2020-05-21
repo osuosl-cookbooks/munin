@@ -3,7 +3,7 @@ maintainer        'Jesse R. Adams'
 maintainer_email  'jesse@techno-geeks.org'
 license           'Apache-2.0'
 description       'Installs and configures munin'
-version           '1.4.4'
+version           '2.0.0'
 
 depends 'apache2', '>= 1.7'
 depends 'chef_nginx', '>= 1.8'
