@@ -49,7 +49,7 @@ describe 'munin::client' do
         let(:fake_dns) do
           {
             'server1.example.com' => '127.0.1.1',
-            'server2.example.com' => '127.0.1.2'
+            'server2.example.com' => '127.0.1.2',
           }
         end
 
@@ -60,7 +60,7 @@ describe 'munin::client' do
         end
 
         it 'allows access to the servers' do
-          fake_dns.values.each do |ip|
+          fake_dns.each_value do |ip|
             expect(chef_run)
               .to render_file(conf_path)
               .with_content("allow ^#{ip.gsub('.', '\\.')}$")
@@ -68,7 +68,7 @@ describe 'munin::client' do
         end
 
         it 'looks up the ip addresses' do
-          fake_dns.keys.each do |host|
+          fake_dns.each_key do |host|
             expect(IPSocket)
               .to receive(:getaddress)
               .with(host)
