@@ -1,4 +1,5 @@
 resource_name :munin_plugin
+provides :munin_plugin
 
 default_action :create
 
