@@ -112,7 +112,7 @@ else
       chmod ${perms[2]:-0755} /var/run/munin'; fi
     "
     user 'root'
-    predefinied_value '@reboot'
+    predefined_value '@reboot'
   end
   cron_d 'munin-cron-2' do
     command 'if [ -x /usr/bin/munin-cron ]; then /usr/bin/munin-cron; fi'
