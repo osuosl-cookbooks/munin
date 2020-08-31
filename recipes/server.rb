@@ -104,12 +104,26 @@ when 'freebsd'
     ignore_failure true
   end
 else
-  cookbook_file '/etc/cron.d/munin' do
-    source 'munin-cron'
-    mode   '0644'
-    owner  'root'
-    group  node['munin']['root']['group']
-    backup 0
+  cron_d 'munin-cron-1' do
+    command "if [ ! -d /var/run/munin ];
+      then /bin/bash -c 'perms=(`/usr/sbin/dpkg-statoverride --list /var/run/munin`);
+      mkdir /var/run/munin;
+      chown ${perms[0]:-munin}:${perms[1]:-root} /var/run/munin;
+      chmod ${perms[2]:-0755} /var/run/munin'; fi
+    "
+    user 'root'
+    predefined_value '@reboot'
+  end
+  cron_d 'munin-cron-2' do
+    command 'if [ -x /usr/bin/munin-cron ]; then /usr/bin/munin-cron; fi'
+    user 'munin'
+    minute '*/5'
+  end
+  cron_d 'munin-cron-3' do
+    command 'if [ -x /usr/share/munin/munin-limits ]; then /usr/share/munin/munin-limits; fi'
+    user 'munin'
+    minute '14'
+    hour '10'
   end
 end
 
