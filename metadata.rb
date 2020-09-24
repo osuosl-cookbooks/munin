@@ -6,7 +6,7 @@ description       'Installs and configures munin'
 version           '2.1.0'
 
 depends 'apache2', '>= 1.7'
-depends 'chef_nginx', '>= 1.8'
+depends 'nginx', '>= 10.3.1'
 
 supports 'arch'
 supports 'centos'
