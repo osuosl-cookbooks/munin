@@ -2,6 +2,10 @@ munin Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the munin cookbook.
 
+3.0.0 (2020-09-24)
+------------------
+- Migrate away from using chef_nginx to nginx cookbook
+
 2.1.0 (2020-08-31)
 ------------------
 - Chef 16 Fixes
