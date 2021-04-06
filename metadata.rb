@@ -4,6 +4,7 @@ maintainer_email  'jesse@techno-geeks.org'
 license           'Apache-2.0'
 description       'Installs and configures munin'
 version           '3.0.0'
+chef_version      '>= 16.0'
 
 depends 'apache2', '>= 1.7'
 depends 'nginx', '>= 10.3.1'
